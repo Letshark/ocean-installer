@@ -7,6 +7,7 @@ use Composer\IO\IOInterface;
 use Composer\Plugin\PluginInterface;
 use Composer\EventDispatcher\EventSubscriberInterface;
 use Composer\Script\Event;
+use Ocean\Installer\Composer\VerifyLicense;
 
 class InstallPlugin implements PluginInterface, EventSubscriberInterface
 {
@@ -26,8 +27,6 @@ class InstallPlugin implements PluginInterface, EventSubscriberInterface
     {
         $io = $event->getIO();
         $io->write("<comment>Verifying Ocean license...</comment>");
-
-        // contoh cek lisensi
-        // kalau gagal -> throw exception
+        VerifyLicense::check($event);
     }
 }

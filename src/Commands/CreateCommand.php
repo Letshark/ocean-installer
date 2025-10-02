@@ -33,29 +33,12 @@ class CreateCommand extends Command
             $name = $helper->ask($input, $output, $question);
         }
 
-        $question = new Question('Input token license: ');
-        $license = $helper->ask($input, $output, $question);
-
-        $output->writeln("<info>🔑 Verifying license token...</info>");
-
-        $client = new Client([
-            'base_uri' => 'https://api.letshark.com',
-            'timeout'  => 10,
-        ]);
-
         try {
-            $response = $client->post('/ocean/license/verify', [
-                'token' => $license,
-            ]);
+            $data = $this->verify($input, $output);
 
-            $data = json_decode($response->getBody(), true);
-
-            if (empty($data['token']) || !$data['token']) {
-                $output->writeln("<error>❌ Invalid license.</error>");
+            if ($data === false) {
                 return Command::FAILURE;
             }
-
-            $output->writeln("<info>✅ License validate, preparing new project {$name}...</info>");
 
             $zipPath = sys_get_temp_dir() . "/ocean-{$name}.zip";
             file_put_contents($zipPath, fopen($data['content'], 'r'));
@@ -65,13 +48,6 @@ class CreateCommand extends Command
                 $zip->extractTo($name);
                 $zip->close();
                 unlink($zipPath);
-
-                $composerAuthPath = getenv("HOME") . "/.composer/auth.json";
-                $composerAuth = [
-                    "license" => $license,
-                    "token" => $data['token'] ?? '',
-                ];
-                file_put_contents($composerAuthPath, json_encode($composerAuth, JSON_PRETTY_PRINT));
                 $output->writeln("<info>📦 {$name} project created successfully.</info>");
             } else {
                 $output->writeln("<error>Failed to create new project, Error: Unable download/install Ocean</error>");
@@ -83,5 +59,55 @@ class CreateCommand extends Command
             $output->writeln("<error>Failed to create new project, Error: {$e->getMessage()}</error>");
             return Command::FAILURE;
         }
+    }
+
+    protected function verify(InputInterface $input, OutputInterface $output)
+    {
+        $helper = $this->getHelper('question');
+        $output->writeln("<info>🔑 Verifying Ocean license token...</info>");
+        $license = getenv('OCEAN_LICENSE');
+
+        do {
+            $question = new Question('Input license token: ');
+            $license = $helper->ask($input, $output, $question);
+        } while (!$license);
+
+        file_put_contents(getcwd() . '/.env', "OCEAN_LICENSE={$license}\n", FILE_APPEND);
+        putenv("OCEAN_LICENSE={$license}");
+
+        // 2. Validasi ke API Letshark
+        $client = new Client([
+            'base_uri' => 'https://api.letshark.com',
+            'timeout' => 10,
+        ]);
+
+        $response = $client->post('/ocean/license/verify', [
+            'token' => $license
+        ]);
+        if ($response->getStatusCode() !== 200) {
+            $output->writeln("<error>🔑 ❌ Failed to verify license. Error code " . $response->getStatusCode() . "</error>");
+            return false;
+        }
+        $data = json_decode($response->getBody(), true);
+
+        if (empty($data['token'])) {
+            $output->writeln("<error>🔑 ❌ Invalid license token.</error>");
+            return false;
+        }
+
+        $output->writeln("<info>✅ Token validate. Generate and saving auth token...</info>");
+
+        $authFile = getenv("HOME") . "/.composer/auth.json";
+        $authData = [];
+
+        if (file_exists($authFile)) {
+            $authData = json_decode(file_get_contents($authFile), true);
+        }
+
+        $authData['license'] = $license ?? $license;
+        $authData['auth'] = $data['token'] ?? '';
+
+        file_put_contents($authFile, json_encode($authData, JSON_PRETTY_PRINT));
+        return $data;
     }
 }

@@ -13,15 +13,13 @@ class VerifyLicense
 
         $io->write("<info>🔑 Verifying Ocean token license...</info>");
 
-        // 1. Minta token
         $license = getenv('OCEAN_LICENSE');
-        if (!$license) {
+        do {
             $license = $io->askAndHideAnswer('Input token license: ');
-        }
+        } while (!$license);
 
-        if (!$license) {
-            throw new \RuntimeException("❌ Token required.");
-        }
+        file_put_contents(getcwd() . '/.env', "OCEAN_LICENSE={$license}\n", FILE_APPEND);
+        putenv("OCEAN_LICENSE={$license}");
 
         // 2. Validasi ke API Letshark
         $client = new Client([
@@ -39,7 +37,7 @@ class VerifyLicense
             $data = json_decode($response->getBody(), true);
 
             if (empty($data['token'])) {
-                throw new \RuntimeException("❌ Invalid token.");
+                throw new \RuntimeException("❌ Invalid license token.");
             }
 
             $io->write("<info>✅ Token validate. Generate and saving auth token...</info>");
