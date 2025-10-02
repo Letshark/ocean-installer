@@ -8,20 +8,19 @@ use Composer\Script\Event;
 
 class InstallPlugin implements PluginInterface, EventSubscriberInterface
 {
-    public function activate(\Composer\Composer $composer, \Composer\IO\IOInterface $io)
-    {
-        $io->write("<info>Ocean Installer activated!</info>");
-    }
+    public function activate(Composer $composer, IOInterface $io) {}
+    public function deactivate(Composer $composer, IOInterface $io) {}
+    public function uninstall(Composer $composer, IOInterface $io) {}
 
     public static function getSubscribedEvents()
     {
         return [
-            'post-install-cmd' => 'onPostInstall',
-            'post-update-cmd' => 'onPostInstall',
+            'post-install-cmd' => 'setup',
+            'post-update-cmd' => 'setup',
         ];
     }
 
-    public function onPostInstall(Event $event)
+    public function setup(Event $event)
     {
         $io = $event->getIO();
         $io->write("<comment>Verifying Ocean license...</comment>");
