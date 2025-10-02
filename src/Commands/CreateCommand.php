@@ -22,7 +22,7 @@ class CreateCommand extends Command
             ->addArgument('name', InputArgument::REQUIRED, 'Project name (folder)');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $name = $input->getArgument('name');
 
