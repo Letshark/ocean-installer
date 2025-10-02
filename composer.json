@@ -1,7 +1,7 @@
 {
     "name": "letshark/ocean-installer",
     "description": "Ocean Installer CLI tool for creating Ocean projects",
-    "type": "library",
+    "type": "composer-plugin",
     "keywords": ["ocean", "installer", "cli", "tool"],
     "license": "MIT",
     "bin": ["bin/ocean"],
@@ -13,15 +13,11 @@
     "require": {
         "php": ">=8.2",
         "symfony/console": "^7.0",
-        "guzzlehttp/guzzle": "^7.8"
+        "guzzlehttp/guzzle": "^7.8",
+        "composer-plugin-api": "^2.0"
     },
-    "scripts": {
-        "post-install-cmd": [
-            "Ocean\\Installer\\InstallPlugin::onPostInstall"
-        ],
-        "post-update-cmd": [
-            "Ocean\\Installer\\InstallPlugin::onPostInstall"
-        ]
+    "extra": {
+        "class": "Ocean\\Installer\\InstallPlugin"
     },
     "minimum-stability": "dev",
     "prefer-stable": true
