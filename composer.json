@@ -20,7 +20,7 @@
             "Ocean\\Installer\\InstallPlugin::onPostInstall"
         ],
         "post-update-cmd": [
-            "Ocean\\Installer\\InstallPlugin::postUpdate"
+            "Ocean\\Installer\\InstallPlugin::onPostInstall"
         ]
     },
     "minimum-stability": "dev",
