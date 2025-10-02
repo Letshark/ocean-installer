@@ -54,7 +54,7 @@ class VerifyLicense
 
             file_put_contents($authFile, json_encode($authData, JSON_PRETTY_PRINT));
         } catch (\Exception $e) {
-            throw new \RuntimeException("❌ Failed to verify license: " . $e->getMessage());
+            throw new \RuntimeException("❌ Failed to verify license. Error: " . $e->getMessage());
         }
     }
 }
