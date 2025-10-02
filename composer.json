@@ -16,7 +16,7 @@
         "guzzlehttp/guzzle": "^7.8"
     },
     "extra": {
-        "class": "Letshark\\OceanInstaller\\InstallPlugin"
+        "class": "Ocean\\Installer\\InstallPlugin"
     },
     "minimum-stability": "dev",
     "prefer-stable": true

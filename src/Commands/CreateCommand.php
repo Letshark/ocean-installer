@@ -18,8 +18,9 @@ class CreateCommand extends Command
     protected function configure()
     {
         $this
+            ->setName('create')
             ->setDescription('Create Ocean project')
-            ->addArgument('name', InputArgument::REQUIRED, 'Project name (folder)');
+            ->addArgument('name', InputArgument::OPTIONAL, 'Project name (folder)');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -27,6 +28,11 @@ class CreateCommand extends Command
         $name = $input->getArgument('name');
 
         $helper = $this->getHelper('question');
+        if (empty($name)) {
+            $question = new Question('Input project name: ');
+            $name = $helper->ask($input, $output, $question);
+        }
+
         $question = new Question('Input token license: ');
         $license = $helper->ask($input, $output, $question);
 
