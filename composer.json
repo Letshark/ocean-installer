@@ -1,5 +1,5 @@
 {
-    "name": "ocean/installer",
+    "name": "letshark/ocean-installer",
     "description": "Ocean Installer CLI tool for creating Ocean projects",
     "type": "library",
     "keywords": ["ocean", "installer", "cli", "tool"],
