@@ -1,7 +1,8 @@
 #!/usr/bin/env php
 <?php
 
-__DIR__ . '/../../../autoload.php'
+__DIR__ . '/../../../autoload.php';
+
 use Ocean\Installer\Console;
 
 $console = new Console();
