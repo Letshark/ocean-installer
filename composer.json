@@ -1,0 +1,18 @@
+{
+    "name": "ocean/installer",
+    "description": "Ocean Installer CLI tool for creating Ocean projects",
+    "type": "library",
+    "keywords": ["ocean", "installer", "cli", "tool"],
+    "license": "MIT",
+    "bin": ["bin/ocean"],
+    "require": {
+        "php": ">=8.2",
+        "symfony/console": "^7.0",
+        "guzzlehttp/guzzle": "^7.8"
+    },
+    "scripts": {
+        "pre-install-cmd": [
+            "Ocean\\Installer\\Composer\\VerifyLicense::check"
+        ]
+    }
+}
